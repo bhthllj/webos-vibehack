@@ -2,7 +2,12 @@
 // App ids: run `python3 sync-apps.py --list` (or look in app/apps.js after a sync).
 window.CONFIG = {
   // Apps pinned to the dock row at the bottom, in this order. Missing apps are skipped.
-  dockApps: ['netflix', 'amazon', 'youtube.leanback.v4', 'hotstar'],
+  // Each entry is an app id, or a word from the app's title (case-insensitive) if the id is unknown.
+  // Check ids with: venv/bin/python sync-apps.py $TV_HOST --list
+  dockApps: ['hd+', 'nimi', 'youtube.leanback.v4', 'netflix', 'amazon'],
+
+  // Names shown on the tiles instead of the TV's own titles. Keyed by the same entries as dockApps.
+  titles: { 'hd+': 'Satellit' },
 
   // Apps never shown as tiles (inputs and Live TV are already in the Inputs menu).
   hiddenApps: [

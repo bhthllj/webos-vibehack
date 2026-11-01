@@ -19,10 +19,10 @@
 
   var KEY = { LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40, OK: 13, BACK: 461, ESC: 27 };
 
-  var GREETINGS = [[5, 'Good night'], [12, 'Good morning'], [17, 'Good afternoon'], [22, 'Good evening'], [24, 'Good night']];
-  var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
-    'October', 'November', 'December'];
+  var GREETINGS = [[5, 'Natën e mirë'], [12, 'Mirëmëngjes'], [17, 'Mirëdita'], [22, 'Mirëmbrëma'], [24, 'Natën e mirë']];
+  var DAYS = ['E diel', 'E hënë', 'E martë', 'E mërkurë', 'E enjte', 'E premte', 'E shtunë'];
+  var MONTHS = ['Janar', 'Shkurt', 'Mars', 'Prill', 'Maj', 'Qershor', 'Korrik', 'Gusht', 'Shtator',
+    'Tetor', 'Nëntor', 'Dhjetor'];
 
   var ICON_INPUT = 'M18,7V4c0,-1.1 -0.9,-2 -2,-2H8C6.9,2 6,2.9 6,4v3H5v6l3,6v3h8v-3l3,-6V7H18zM8,4h8v3h-2V5h-1v2h-2V5h-1v2H8V4z';
   var ICON_LIVETV = 'M21,6h-7.59l3.29,-3.29L16,2l-4,4l-4,-4l-0.71,0.71L10.59,6H3c-1.1,0 -2,0.89 -2,2v12c0,1.1 0.9,2 2,2h18c1.1,0 2,-0.89 2,-2V8C23,6.89 22.1,6 21,6zM21,20H3V8h18V20zM9,10v8l7,-4L9,10z';
@@ -61,7 +61,7 @@
 
   function launch(id, title, params) {
     luna('luna://com.webos.applicationManager/launch', { id: id, params: params || {} }, function (res) {
-      if (res.returnValue === false) toast("Can't open " + (title || id));
+      if (res.returnValue === false) toast('Nuk hapet: ' + (title || id));
     });
   }
 
@@ -95,12 +95,29 @@
     }
 
     var dock = [];
-    (CONFIG.dockApps || []).forEach(function (id) {
-      if (byId[id] && !hidden[id] && dock.length < COLUMNS) { dock.push(byId[id]); hidden[id] = true; }
+    (CONFIG.dockApps || []).forEach(function (key) {
+      var app = findApp(all, key);
+      if (app && !hidden[app.id] && dock.length < dockSize()) {
+        var titles = CONFIG.titles || {};
+        if (titles[key]) app.title = titles[key];
+        dock.push(app);
+        hidden[app.id] = true;
+      }
     });
     var rest = all.filter(function (a) { return !hidden[a.id]; });
     rest.sort(byTitle);
     return dock.concat(rest);
+  }
+
+  /** The dock is the first row, but may list more apps than fit: the extras flow into the grid. */
+  function dockSize() { return (CONFIG.dockApps || []).length; }
+
+  /** An app by exact id, else the first whose title contains the key. */
+  function findApp(all, key) {
+    var k = key.toLowerCase(), i;
+    for (i = 0; i < all.length; i++) if (all[i].id === key) return all[i];
+    for (i = 0; i < all.length; i++) if (all[i].title.toLowerCase().indexOf(k) !== -1) return all[i];
+    return null;
   }
 
   var ORDER_KEY = 'tvhome.order';
@@ -416,8 +433,7 @@
       if (h < GREETINGS[k][0]) { $('greeting').textContent = GREETINGS[k][1]; break; }
     }
     var m = now.getMinutes();
-    $('clock').textContent = ((h % 12) || 12) + ':' + (m < 10 ? '0' : '') + m;
-    $('ampm').textContent = h < 12 ? 'am' : 'pm';
+    $('clock').textContent = h + ':' + (m < 10 ? '0' : '') + m;
     $('date').textContent = DAYS[now.getDay()] + '  ' + now.getDate() + ' ' + MONTHS[now.getMonth()];
   }
 
@@ -428,15 +444,15 @@
       var text = 'Wi-Fi';
       if (res.wired && res.wired.state === 'connected') text = 'Ethernet';
       else if (res.wifi && res.wifi.state === 'connected') text = res.wifi.ssid || 'Wi-Fi';
-      else if (res.isInternetConnectionAvailable === false) text = 'Offline';
+      else if (res.isInternetConnectionAvailable === false) text = 'Pa internet';
       $('wifiLabel').textContent = text;
     });
   }
 
   function activatePill(i) {
     if (i === 0) showInputs();
-    else if (i === 1) launch('com.palm.app.settings', 'Settings', { target: 'network' });
-    else launch('com.palm.app.settings', 'Settings');
+    else if (i === 1) launch('com.palm.app.settings', 'Cilësimet', { target: 'network' });
+    else launch('com.palm.app.settings', 'Cilësimet');
   }
 
   // ---- inputs dropdown -----------------------------------------------------------------------
@@ -448,9 +464,9 @@
     inputs.forEach(function (inp) { addInputRow(ICON_INPUT, inp.label, inp.appId); });
     if (CONFIG.liveTvApp) {
       if (inputRows.length) panel.appendChild(Object.assign(document.createElement('div'), { className: 'separator' }));
-      addInputRow(ICON_LIVETV, 'Live TV', CONFIG.liveTvApp);
+      addInputRow(ICON_LIVETV, 'TV Live', CONFIG.liveTvApp);
     }
-    if (!inputRows.length) { toast('No inputs found'); return; }
+    if (!inputRows.length) { toast('Nuk u gjetën hyrje'); return; }
 
     // Hang right below the Inputs pill, at least as wide as it.
     var r = pills[0].getBoundingClientRect();
@@ -498,7 +514,7 @@
     editing = { item: it, snapshot: items.slice() };
     it.el.classList.add('moving');
     document.body.classList.add('editing');
-    toast('Arrows to move  ·  OK to place  ·  Back to cancel');
+    toast('Shigjetat për ta lëvizur  ·  OK për ta vendosur  ·  Mbrapa për anulim');
   }
 
   function moveTo(to) {
