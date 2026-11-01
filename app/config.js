@@ -15,7 +15,9 @@ window.CONFIG = {
     'com.webos.app.livetv',
     'com.webos.app.hdmi1', 'com.webos.app.hdmi2', 'com.webos.app.hdmi3', 'com.webos.app.hdmi4',
     'com.webos.app.lgchannels',   // LG Channels
-    'shortcutcopilot'             // Copilot
+    'shortcutcopilot',            // Copilot
+    'com.miniclip.eightballpool', // 8 Ball Pool
+    'amazon.alexa.view'           // Amazon Alexa
   ],
 
   // The Live TV app, offered at the end of the Inputs menu. Leave empty to omit.
