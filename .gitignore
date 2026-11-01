@@ -8,3 +8,7 @@ app/icons/
 app/icon.png
 app/largeIcon.png
 .DS_Store
+
+# ESP32 Wi-Fi and key
+esp32-watcher/src/secrets.h
+esp32-watcher/.pio/
