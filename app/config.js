@@ -7,7 +7,7 @@ window.CONFIG = {
   dockApps: ['hdp.opapp', 'nimitv', 'youtube.leanback.v4', 'netflix', 'amazon'],
 
   // Names shown on the tiles instead of the TV's own titles. Keyed by the same entries as dockApps.
-  titles: { 'hdp.opapp': 'Satellit' },
+  titles: { 'hdp.opapp': 'Satellit', 'nimitv': 'Shqip' },
 
   // Apps never shown as tiles (inputs and Live TV are already in the Inputs menu).
   hiddenApps: [
