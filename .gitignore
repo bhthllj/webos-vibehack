@@ -12,3 +12,5 @@ app/largeIcon.png
 # ESP32 Wi-Fi and key
 esp32-watcher/src/secrets.h
 esp32-watcher/.pio/
+esphome/secrets.yaml
+esphome/.esphome/
